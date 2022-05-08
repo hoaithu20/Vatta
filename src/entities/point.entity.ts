@@ -1,28 +1,15 @@
-import { WeekStatus } from 'src/constants/week-status.enum';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  RelationId,
-} from 'typeorm';
-import { User } from './user.entity';
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { User } from "./user.entity";
 
-@Entity('point')
-export class Point extends BaseEntity {
-  @PrimaryGeneratedColumn()
+@Entity({tableName: 'point'})
+export class Point {
+  @PrimaryKey()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.points)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, {name: 'user_id'})
   user: User;
 
-  @RelationId((p: Point) => p.user)
-  userId: number;
-
-  @Column({
+  @Property({
     name: 'point',
     type: 'decimal',
     precision: 10,
@@ -31,6 +18,6 @@ export class Point extends BaseEntity {
   })
   point: string;
 
-  @Column({ default: 0 })
+  @Property({ default: 0 })
   week: number;
 }
