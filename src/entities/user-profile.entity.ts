@@ -9,7 +9,7 @@ export class Profile {
   @Property({ nullable: true })
   avatar: string;
 
-  @OneToOne({name: 'user_id'})
+  @OneToOne(() => User, u => u.profile)
   user: User;
 
   @Property({ name: 'date_of_birth' })

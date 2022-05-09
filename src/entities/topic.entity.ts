@@ -1,9 +1,10 @@
-import { Collection, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
 import { Level, QuestionStatus } from "../constants";
 import { History } from "./history.entity";
 import { Question } from "./question.entity";
 import { User } from "./user.entity";
 
+@Entity({tableName: 'topic'})
 export class Topic {
   @PrimaryKey()
   id: number;
@@ -15,7 +16,7 @@ export class Topic {
   histories = new Collection<History>(this);
 
   @OneToMany(() => Question, q => q.topic)
-  questions = new Collection<History>(this);
+  questions = new Collection<Question>(this);
 
   @Property({ default: QuestionStatus.ACTIVE })
   status: QuestionStatus;

@@ -33,8 +33,8 @@ export class User {
   @OneToMany(() => Question, (q) => q.user)
   questions = new Collection<Question>(this);
 
-  @OneToMany(() => Topic, (t) => t.user)
-  topics = new Collection<Topic>(this);
+  // @OneToMany(() => Topic, (t) => t.user)
+  // topics = new Collection<Topic>(this);
 
   @OneToMany(() => History, (h) => h.user)
   histories = new Collection<History>(this);

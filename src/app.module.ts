@@ -1,15 +1,17 @@
-import { Logger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Post } from './entities';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { DemoController } from './controllers/demo.controller';
 import { DemoService } from './services/demo.service';
+import { OrmModule } from './modules/orm.module';
+import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Question, Story, Profile, Topic, Week } from 'src/entities';
 
 @Module({
   imports: [
+    OrmModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '.env.dev'],
@@ -17,7 +19,7 @@ import { DemoService } from './services/demo.service';
     MikroOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        dbName: config.get('DB_NAME'),
+        dbName: config.get('DB_DATABASE'),
         password: config.get('DB_PASSWORD'),
         highlighter: new SqlHighlighter(),
         debug: true,
@@ -25,7 +27,7 @@ import { DemoService } from './services/demo.service';
       }),
       inject: [ConfigService],
     }),
-    MikroOrmModule.forFeature([Post]),
+    //MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week])
   ],
   controllers: [AppController, DemoController],
   providers: [AppService, DemoService],
