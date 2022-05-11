@@ -5,7 +5,9 @@ import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Questi
 @Module({
   imports: [
     MikroOrmModule.forRoot(),
-    MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week])
+    MikroOrmModule.forFeature({
+      entities: [Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]
+})
   ],
   exports: [MikroOrmModule, OrmModule],
 })

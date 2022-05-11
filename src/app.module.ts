@@ -23,11 +23,13 @@ import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Questi
         password: config.get('DB_PASSWORD'),
         highlighter: new SqlHighlighter(),
         debug: true,
-        autoLoadEntities: true,
+        autoLoadEntities: false,
       }),
       inject: [ConfigService],
     }),
-    //MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week])
+    MikroOrmModule.forFeature({
+      entities: [Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]
+    })
   ],
   controllers: [AppController, DemoController],
   providers: [AppService, DemoService],
