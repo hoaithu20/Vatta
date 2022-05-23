@@ -1,26 +1,27 @@
-import { MikroORM } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { Module} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from 'src/authentication/jwt.strategy';
+import { JwtStrategy } from 'src/common/guards/jwt.strategy';
 import { AuthController } from 'src/controllers/auth.controller';
-import { User, Post, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week } from 'src/entities';
-import { UserRepository } from 'src/repositories/user.repository';
+import { Profile, User } from 'src/entities';
+import { Otp } from 'src/entities/otp.entity';
+import { MailModule } from 'src/mail/mail.module';
 import { AuthService } from 'src/services/auth.service';
-// import { JwtStrategy } from 'src/security/jwt.strategy';
-// import { AuthService } from 'src/services/auth.service';
-// import { QuestionsModule } from './questions.module';
-// import { PackagesModule } from './packages.module';
-// import { MailModule } from 'src/mail/mail.module';
-// import { AdminModule } from './admin.module';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature({
-      entities: [Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]
-    })
+    JwtModule.register({
+      secret: 'vatta',
+      signOptions: {
+        expiresIn: '100d',
+      },
+    }),
+    MikroOrmModule.forFeature([User, Profile, Otp]),
+    ConfigModule,
+    PassportModule,
+    MailModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],

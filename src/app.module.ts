@@ -6,15 +6,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { DemoController } from './controllers/demo.controller';
 import { DemoService } from './services/demo.service';
-import { OrmModule } from './modules/orm.module';
 import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Question, Story, Profile, Topic, Week } from 'src/entities';
+import { AuthModule } from './modules/auth.module';
+import configuration from './configs/configuration';
 
 @Module({
   imports: [
-    OrmModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '.env.dev'],
+      load: [configuration],
     }),
     MikroOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
@@ -23,15 +24,14 @@ import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Questi
         password: config.get('DB_PASSWORD'),
         highlighter: new SqlHighlighter(),
         debug: true,
-        autoLoadEntities: false,
+        autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
-    MikroOrmModule.forFeature({
-      entities: [Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]
-    })
+    MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]),
+    AuthModule,
   ],
-  controllers: [AppController, DemoController],
-  providers: [AppService, DemoService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
