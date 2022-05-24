@@ -12,6 +12,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { MailService } from 'src/mail/mail.service';
 import { OtpEmail } from 'src/mail/mail-context.interface';
 import { Otp } from 'src/entities/otp.entity';
+import { ChangePasswordRequest, CheckOtpRequest, ResetPasswordRequest} from 'src/dto/forgot-pass.request';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,6 @@ export class AuthService {
     private readonly profileRepository: EntityRepository<Profile>,
     @InjectRepository(Otp)
     private readonly otpRepository: EntityRepository<Otp>,
-   // private mailService: MailService,
   ) {
   }
   async validate(username: string, password: string) {
@@ -101,10 +101,54 @@ export class AuthService {
     await this.mailService.sendMailForgotPassword(obj);
     const otpEntity = this.otpRepository.create({
       otp,
-      userId: user.id,
+      email: user.email,
       expiryTime: new Date(new Date().getTime() + 1000*Number(this.configService.get('authConfig').expiredOTP))
     })
     await this.orm.em.persistAndFlush(otpEntity);
-    return otp;
+    return user.id;
+  }
+
+  async checkOtp(input: CheckOtpRequest) {
+    const otp = await this.otpRepository.findOne({ $and: [{ email: input.email }, {otp: input.otp}] });
+    if(!otp || otp.expiryTime < new Date()) {
+      return false;
+    }
+    return true;
+  }
+
+  async resetPassword(input: ResetPasswordRequest) {
+    const {email, newPassword, confirmPassword} = input;
+    if(newPassword !== confirmPassword) {
+      return { mess: ErrorCode.PASSWORD_NOT_MATCH }
+    }
+    const user = await this.userRepository.findOne({email})
+    if(!user) {
+      return {mess: ErrorCode.USER_NOT_EXIST}
+    }
+    user.password = await bcrypt.hash(
+      newPassword,
+      10,
+    );
+    await this.orm.em.flush();
+  }
+
+  async changePassword(userId: number, request: ChangePasswordRequest) {
+    const user = await this.userRepository.findOne({
+      id: userId
+    });
+    if (!user) {
+      return {mess: ErrorCode.USER_NOT_EXIST,}
+    }
+    if (!bcrypt.compareSync(request.password, user.password)) {
+      return {mess: ErrorCode.INCORRECT_PASSWORD, }
+    }
+    if (request.newPassword !== request.confirmPassword) {
+      return {mess: ErrorCode.PASSWORD_NOT_MATCH,}
+    }
+    user.password = await bcrypt.hash(
+      request.newPassword,
+      10,
+    );
+    await this.orm.em.flush();
   }
 }

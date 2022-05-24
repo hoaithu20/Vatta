@@ -9,6 +9,7 @@ import { DemoService } from './services/demo.service';
 import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Question, Story, Profile, Topic, Week } from 'src/entities';
 import { AuthModule } from './modules/auth.module';
 import configuration from './configs/configuration';
+import { UserModule } from './modules/user.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import configuration from './configs/configuration';
     }),
     MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]),
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

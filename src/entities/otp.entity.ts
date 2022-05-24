@@ -4,9 +4,9 @@ import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 export class Otp {
   @PrimaryKey()
   id: number;
-
-  @Property({name: 'user_id'})
-  userId: number;
+  
+  @Property()
+  email: string;
 
   @Property()
   otp: number;

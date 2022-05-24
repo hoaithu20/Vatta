@@ -10,7 +10,7 @@ export enum ErrorCode {
   USER_EXISTED = 'email đã tồn tại',
   USERNAME_EXISTED = 'tên đăng nhập đã tồn tại',
   SIGNUP_FAILED = 'đăng ký thất bại',
-  USER_NOT_EXIST = 'tên đăng nhập không tồn tại',
+  USER_NOT_EXIST = 'người dùng không tồn tại',
   INCORRECT_PASSWORD = 'sai mật khẩu',
   NOT_FOUND_PACKAGE = 'không tìm thấy bộ câu hỏi',
   PASSWORD_NOT_MATCH = 'mật khẩu không khớp',
@@ -19,4 +19,5 @@ export enum ErrorCode {
   NOT_FOUND_HISTORY = 'không tìm thấy lịch sử của bộ câu hỏi này',
   ANSWER_NOT_IN_QUESTION = 'câu trả lời không ở trong câu hỏi',
   NOT_FOUND_WEEK = 'không tìm thấy tuần',
+  EXPIRED_OTP = 'otp hết hạn',
 }
