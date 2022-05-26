@@ -1,13 +1,16 @@
 import { EntityRepository } from "@mikro-orm/mysql";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
-import { User } from "src/entities";
+import { UpdateProfileRequest } from "src/dto/user.request";
+import { Profile, User } from "src/entities";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
+    @InjectRepository(Profile)
+    private readonly profileRepository: EntityRepository<Profile>,
   ) { }
 
   async getProfile(userId: number) {
@@ -29,5 +32,10 @@ export class UserService {
     return profile;
   }
 
-  async updateProfile(userId: number,)
+  async updateProfile(userId: number, input: UpdateProfileRequest, file?:string) {
+    const profile = await this.profileRepository.findOne({user: userId})
+    await this.profileRepository.merge(profile ?? new Profile(), {
+      avata
+    })
+  }
 }
