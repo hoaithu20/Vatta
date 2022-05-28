@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
 import { IsNumber, IsOptional, Min } from "class-validator";
-import { ErrorCode } from "src/constants";
+import { ErrorCode } from "src/common/constants";
 
 export class PagingRequest {
   @ApiProperty()

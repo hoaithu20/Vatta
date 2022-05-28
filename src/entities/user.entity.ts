@@ -1,5 +1,5 @@
 import { Collection, Entity, OneToMany, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { UserRole, UserStatus } from "../constants";
+import { UserRole, UserStatus } from "../common/constants";
 import { History } from "./history.entity";
 import { Point } from "./point.entity";
 import { Question } from "./question.entity";

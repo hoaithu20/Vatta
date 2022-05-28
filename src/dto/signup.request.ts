@@ -7,8 +7,8 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
-import { ErrorCode } from 'src/constants/errorcode.constant';
-import { Language } from 'src/constants/language.enum';
+import { ErrorCode } from 'src/common/constants/errorcode.constant';
+import { Language } from 'src/common/constants/language.enum';
 
 export class SignupRequest {
   @ApiProperty()

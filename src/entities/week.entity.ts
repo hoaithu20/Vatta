@@ -1,5 +1,5 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import { WeekStatus } from "../constants";
+import { WeekStatus } from "../common/constants";
 
 @Entity({tableName: 'week'})
 export class Week {

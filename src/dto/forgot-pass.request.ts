@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsNumber, IsString, Matches } from "class-validator";
-import { ErrorCode } from "src/constants";
+import { ErrorCode } from "src/common/constants";
 
 export class ForgotPasswordRequest {
   @ApiProperty()

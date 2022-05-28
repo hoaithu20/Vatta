@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Language } from 'src/constants/language.enum';
+import { Language } from 'src/common/constants/language.enum';
 
 export class LoginRequest {
   @ApiProperty()

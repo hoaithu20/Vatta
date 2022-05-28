@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
 import { BaseResponse } from '../responses/base.response';
-import { ErrorCode } from '../constants/errorcode.constant';
+import { ErrorCode } from '../common/constants/errorcode.constant';
 
 export const normalError = (errors: ValidationError[]): BaseResponse<null> => {
   const response = new BaseResponse<null>();

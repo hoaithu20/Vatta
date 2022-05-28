@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { map } from "rxjs";
-import { ErrorCode } from "src/constants";
+import { ErrorCode } from "src/common/constants";
 import { BaseResponse } from "src/responses/base.response";
 import { PaginateResult } from "src/responses/paginateResult";
 

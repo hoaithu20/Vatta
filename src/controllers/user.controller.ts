@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Authentication } from "src/common/decoraters/auth.decorator";
 import { CurrUser } from "src/common/decoraters/user.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { UpdateProfileRequest } from "src/dto/user.request";
@@ -15,13 +16,13 @@ export class UserController {
   ) {}
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @Authentication()
   @Get('profile')
   async getProfile(@CurrUser() user: User) {
     return await this.userService.getProfile(user.id)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Authentication()
   @ApiBearerAuth()
   @Post('update-profile')
   @UseInterceptors(FileInterceptor('avatar'))
@@ -31,32 +32,13 @@ export class UserController {
     @Body() input: UpdateProfileRequest,
   ) {
     return await this.userService.updateProfile(user.id, input, file?.filename )
-    try {
-      const profile = await this.profileRepository
-        .createQueryBuilder()
-        .where('user_id = :userId', { userId: user.id })
-        .getOne();
-      if (profile) {
-        (profile.dateOfBirth = request.date),
-          (profile.sex = request.sex),
-          (profile.avatar = file?.filename),
-          profile.save();
-      } else {
-        const newProfile = this.profileRepository.create({
-          user: user.id as any,
-          dateOfBirth: request.date,
-          sex: request.sex,
-          avatar: file?.filename,
-        });
-        newProfile.save();
-        return newProfile;
-      }
-      return profile;
-    } catch (err) {
-      throw new BadRequestException({
-        code: ErrorCode.UNSUCCESS,
-      });
-    }
   }
 
+ // @Get('avatar/:img?')
+ @Get('file')
+  async getAvatar(@Query('file') file: string, @Res() res) {
+    return res.sendFile(file, {
+      root: 'upload',
+    });
+  }
 }

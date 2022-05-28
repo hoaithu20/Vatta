@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ErrorCode } from 'src/constants';
+import { ErrorCode } from 'src/common/constants';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {

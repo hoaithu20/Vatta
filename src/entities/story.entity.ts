@@ -1,5 +1,5 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import { QuestionStatus } from "../constants";
+import { QuestionStatus } from "../common/constants";
 
 @Entity({tableName: 'story'})
 export class Story {

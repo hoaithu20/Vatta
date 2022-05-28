@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsDate, IsOptional, IsString } from "class-validator";
+import { IsDate, IsEnum, IsOptional, IsString } from "class-validator";
+import { Sex } from "src/common/constants";
 
 export class UpdateProfileRequest {
   @ApiProperty()
@@ -9,8 +10,8 @@ export class UpdateProfileRequest {
   @Type(() => Date)
   date: Date;
 
-  @ApiProperty()
+  @ApiProperty({example: `${Sex.FEMALE} | ${Sex.MALE} | ${Sex.UNKNOWN}`})
   @IsOptional()
-  @IsString()
-  sex: string;
+  @IsEnum(Sex)
+  sex: Sex;
 }

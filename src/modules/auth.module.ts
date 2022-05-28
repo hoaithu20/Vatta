@@ -9,13 +9,14 @@ import { Profile, User } from 'src/entities';
 import { Otp } from 'src/entities/otp.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { AuthService } from 'src/services/auth.service';
-
+import * as dotenv from 'dotenv';
+dotenv.config()
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'vatta',
+      secret: process.env.SECRET_KEY,
       signOptions: {
-        expiresIn: '100d',
+        expiresIn: process.env.EXPIRED_TOKEN,
       },
     }),
     MikroOrmModule.forFeature([User, Profile, Otp]),

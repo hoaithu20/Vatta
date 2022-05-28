@@ -1,5 +1,5 @@
 import { Entity, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { Sex } from "src/constants";
+import { Sex } from "src/common/constants";
 import { User } from "./user.entity";
 
 @Entity({tableName: 'profile'})

@@ -1,12 +1,15 @@
+import { MikroORM } from "@mikro-orm/core";
 import { EntityRepository } from "@mikro-orm/mysql";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
 import { UpdateProfileRequest } from "src/dto/user.request";
 import { Profile, User } from "src/entities";
+import fs from 'fs';
 
 @Injectable()
 export class UserService {
   constructor(
+    private readonly orm: MikroORM,
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
     @InjectRepository(Profile)
@@ -33,9 +36,14 @@ export class UserService {
   }
 
   async updateProfile(userId: number, input: UpdateProfileRequest, file?:string) {
-    const profile = await this.profileRepository.findOne({user: userId})
-    await this.profileRepository.merge(profile ?? new Profile(), {
-      avata
-    })
+    let profile = await this.profileRepository.findOne({user: userId})
+    const oldAvatar = profile.avatar;
+    profile = profile ? profile : new Profile();
+    profile.avatar = file;
+    profile.dateOfBirth = input.date;
+    profile.sex = input.sex;
+    await this.orm.em.persistAndFlush(profile);
+    fs.unlinkSync(`./upload/${oldAvatar}`)
+    return profile;
   }
 }

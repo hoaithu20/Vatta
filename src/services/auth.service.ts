@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ErrorCode } from 'src/constants/errorcode.constant';
+import { ErrorCode } from 'src/common/constants/errorcode.constant';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
