@@ -3,7 +3,7 @@ import { UserRole, UserStatus } from "../common/constants";
 import { History } from "./history.entity";
 import { Point } from "./point.entity";
 import { Question } from "./question.entity";
-import { Topic } from "./topic.entity";
+import { Packages } from "./package.entity";
 import { Profile } from "./profile.entity";
 
 @Entity({tableName: 'user'})
@@ -21,7 +21,6 @@ export class User {
   password: string;
 
   @Property({
-    name: 'status',
     nullable: false,
     default: UserStatus.VERIFYING,
   })
@@ -33,22 +32,22 @@ export class User {
   @OneToMany(() => Question, (q) => q.user)
   questions = new Collection<Question>(this);
 
-  // @OneToMany(() => Topic, (t) => t.user)
-  // topics = new Collection<Topic>(this);
+  @OneToMany(() => Packages, (p) => p.user)
+  packages = new Collection<Packages>(this);
 
   @OneToMany(() => History, (h) => h.user)
   histories = new Collection<History>(this);
 
   @OneToOne(() => Profile, p => p.user)
   profile: Profile;
-  // @@@
-  @OneToMany(() => Point, (p) => p.user)
-  points: Point;
 
-  @Property({name: 'created_at'})
+  @OneToMany(() => Point, (p) => p.user)
+  points = new Collection<Point>(this);
+
+  @Property()
   createdAt: Date = new Date();
 
-  @Property({ name: 'updated_at', onUpdate: () => new Date() })
+  @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
 }

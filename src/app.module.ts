@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { DemoController } from './controllers/demo.controller';
 import { DemoService } from './services/demo.service';
-import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Question, Story, Profile, Topic, Week } from 'src/entities';
+import { Answer, Dictionary, Point, Post, User, History, QuestionHistory, Question, Story, Profile, Week, Packages } from 'src/entities';
 import { AuthModule } from './modules/auth.module';
 import configuration from './common/configs/configuration';
 import { UserModule } from './modules/user.module';
@@ -29,7 +29,7 @@ import { UserModule } from './modules/user.module';
       }),
       inject: [ConfigService],
     }),
-    MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Topic, Profile, Week]),
+    MikroOrmModule.forFeature([Post, User, Answer, Dictionary, History, Point, QuestionHistory, Question, Story, Packages, Profile, Week]),
     AuthModule,
     UserModule,
   ],

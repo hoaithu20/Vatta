@@ -1,4 +1,4 @@
-import {Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import {Collection, Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Question } from "./question.entity";
 
 @Entity({tableName: 'answer'})
@@ -12,11 +12,11 @@ export class Answer{
   @Property({ default: null, nullable: true })
   description: string;
 
-  @Property({ name: 'is_true' })
+  @Property()
   isTrue: boolean;
 
-  @ManyToOne(() => Question, {name: 'question_id'})
-  question: Question;
+  @ManyToOne(() => Question)
+  question = new Collection<Question>(this);
 
   @Property()
   createdAt = new Date();

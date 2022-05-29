@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Collection, Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { History } from "./history.entity";
 
 @Entity({tableName: 'question_history'})
@@ -6,12 +6,12 @@ export class QuestionHistory {
   @PrimaryKey()
   id: number;
 
-  @ManyToOne(() => History, {name: 'history_id'})
-  history: History;
+  @ManyToOne(() => History)
+  history =  new Collection<History>(this);
 
-  @Property({name: 'question_id'})
+  @Property()
   questionId: number;
 
-  @Property({name: 'answer_id'})
+  @Property()
   answerId: number;
 }

@@ -21,9 +21,9 @@ export class Story {
   @Property({ default: QuestionStatus.ACTIVE })
   status: QuestionStatus;
 
-  @Property({ name: 'created_at' })
-  createdAt = new Date();
+  @Property()
+  createdAt: Date = new Date();
 
-  @Property({ name: 'updated_at', onUpdate: () => new Date() })
-  updatedAt = new Date();
+  @Property({ onUpdate: () => new Date() })
+  updatedAt: Date = new Date();
 }

@@ -1,27 +1,30 @@
-import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
 import { Level, QuestionStatus } from "../common/constants";
 import { History } from "./history.entity";
 import { Question } from "./question.entity";
 import { User } from "./user.entity";
 
-@Entity({tableName: 'topic'})
-export class Topic {
+@Entity({tableName: 'package'})
+export class Packages {
   @PrimaryKey()
   id: number;
 
-  @ManyToOne(() => User, {name: 'creator_id'})
+  @ManyToOne(() => User)
   user: User;
 
-  @OneToMany(() => History, h => h.topic)
+  @OneToMany(() => History, h => h.package)
   histories = new Collection<History>(this);
 
-  @OneToMany(() => Question, q => q.topic)
-  questions = new Collection<Question>(this);
+  @ManyToMany(() => Question)
+  questions = new Collection<Question>(this); // owning side
+
+  // @OneToMany(() => Question, q => q.package)
+  // questions: Question[];
 
   @Property({ default: QuestionStatus.ACTIVE })
   status: QuestionStatus;
 
-  @Property({ name: 'total_question' })
+  @Property()
   totalQuestion: number;
 
   @Property({ default: Level.EASY })
@@ -30,7 +33,7 @@ export class Topic {
   @Property({ default: false })
   isHidden: boolean;
 
-  @Property({ name: 'time_out' })
+  @Property()
   timeOut: number;
 
   @Property({ default: 0 })
@@ -42,9 +45,11 @@ export class Topic {
   // @Property({ name: 'question_ids', type: 'json' })
   // questionIds: number[];
 
-  @Property({name: 'created_at'})
+  @Property()
   createdAt = new Date();
 
-  @Property({ name: 'updated_at', onUpdate: () => new Date() })
+  @Property({ onUpdate: () => new Date() })
   updatedAt = new Date();
 }
+
+
