@@ -1,10 +1,15 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
-import { Authentication, CurrUser } from "src/common/decoraters";
-import { CreateQuestionRequest, DoQuestionRequest, GetQuestionRequest, PagingRequest } from "src/dto";
-import { User } from "src/entities";
-import { PaginateResult } from "src/responses/paginateResult";
-import { QuestionService } from "src/services/question.service";
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Authentication, CurrUser } from 'src/common/decoraters';
+import {
+  CreateQuestionRequest,
+  DoQuestionRequest,
+  GetQuestionRequest,
+  PagingRequest,
+} from 'src/dto';
+import { User } from 'src/entities';
+import { PaginateResult } from 'src/responses/paginateResult';
+import { QuestionService } from 'src/services/question.service';
 
 @ApiTags('/api/question')
 @Controller('/api/question')

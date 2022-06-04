@@ -1,11 +1,11 @@
-import { MikroOrmModule } from "@mikro-orm/nestjs";
-import { Module } from "@nestjs/common";
-import { MulterModule } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { AdminController } from "src/controllers/admin.controller";
-import { Question, Story } from "src/entities";
-import { AdminService } from "src/services/admin.service";
-import { ConvertFile } from "src/utils/helper";
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { Module } from '@nestjs/common';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { AdminController } from 'src/controllers/admin.controller';
+import { Question, Story } from 'src/entities';
+import { AdminService } from 'src/services/admin.service';
+import { ConvertFile } from 'src/utils/helper';
 
 @Module({
   imports: [
@@ -21,8 +21,6 @@ import { ConvertFile } from "src/utils/helper";
   ],
   providers: [AdminService],
   controllers: [AdminController],
-  exports: [AdminService]
+  exports: [AdminService],
 })
-export class AdminModule {
-  
-}
+export class AdminModule {}

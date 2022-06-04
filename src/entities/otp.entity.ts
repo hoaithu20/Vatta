@@ -1,10 +1,10 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity({tableName: 'otp'})
+@Entity({ tableName: 'otp' })
 export class Otp {
   @PrimaryKey()
   id: number;
-  
+
   @Property()
   email: string;
 
@@ -13,5 +13,4 @@ export class Otp {
 
   @Property()
   expiryTime: Date;
-
 }

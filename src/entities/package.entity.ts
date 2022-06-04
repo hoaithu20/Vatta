@@ -1,10 +1,18 @@
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
-import { Level, QuestionStatus } from "../common/constants";
-import { History } from "./history.entity";
-import { Question } from "./question.entity";
-import { User } from "./user.entity";
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Level, QuestionStatus } from '../common/constants';
+import { History } from './history.entity';
+import { Question } from './question.entity';
+import { User } from './user.entity';
 
-@Entity({tableName: 'package'})
+@Entity({ tableName: 'package' })
 export class Packages {
   @PrimaryKey()
   id: number;
@@ -12,7 +20,7 @@ export class Packages {
   @ManyToOne(() => User)
   user: User;
 
-  @OneToMany(() => History, h => h.package)
+  @OneToMany(() => History, (h) => h.package)
   histories = new Collection<History>(this);
 
   @ManyToMany(() => Question)
@@ -51,5 +59,3 @@ export class Packages {
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }
-
-

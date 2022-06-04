@@ -1,7 +1,14 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
-import { Level, QuestionStatus } from "src/common/constants";
-import { PagingRequest } from "./paging.request";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { Level, QuestionStatus } from 'src/common/constants';
+import { PagingRequest } from './paging.request';
 
 export class GetDetailPackageRequest extends PagingRequest {
   @ApiProperty()
@@ -60,4 +67,3 @@ export class DoPackageRequest {
   @IsArray()
   questions: Questions[];
 }
-

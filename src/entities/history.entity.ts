@@ -1,13 +1,20 @@
-import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
-import { Packages } from "./package.entity";
-import { User } from "./user.entity";
+import {
+  Collection,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Packages } from './package.entity';
+import { User } from './user.entity';
 
 export interface QuestionMap {
   questionId: number;
   answerId: number;
 }
 
-@Entity({tableName: 'history'})
+@Entity({ tableName: 'history' })
 export class History {
   @PrimaryKey()
   id: number;
@@ -18,10 +25,10 @@ export class History {
   @ManyToOne(() => Packages, { wrappedReference: true, nullable: true })
   package?: Packages;
 
-  @Property({default: 0})
+  @Property({ default: 0 })
   point: number;
 
-  @Property({default: 0})
+  @Property({ default: 0 })
   time: number;
 
   // @Property({default: true })
@@ -30,13 +37,12 @@ export class History {
   @Property({ nullable: true, default: null, type: 'json' })
   questions: number[];
 
-  @Property({type: 'json', nullable: true })
+  @Property({ type: 'json', nullable: true })
   questionMap: QuestionMap[];
 
-  @Property({name: 'created_at'})
+  @Property({ name: 'created_at' })
   createdAt: Date = new Date();
 
   @Property({ name: 'updated_at', onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }
-

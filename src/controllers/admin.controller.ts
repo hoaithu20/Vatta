@@ -1,10 +1,16 @@
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
-import { FileFieldsInterceptor } from "@nestjs/platform-express";
-import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
-import { UserRole } from "src/common/constants";
-import { Authentication, Roles } from "src/common/decoraters";
-import { ApproveQuestionRequest, CreateStoryRequest } from "src/dto";
-import { AdminService } from "src/services/admin.service";
+import {
+  Body,
+  Controller,
+  Post,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { UserRole } from 'src/common/constants';
+import { Authentication, Roles } from 'src/common/decoraters';
+import { ApproveQuestionRequest, CreateStoryRequest } from 'src/dto';
+import { AdminService } from 'src/services/admin.service';
 
 @ApiTags('api/admin')
 @Controller('api/admin')
@@ -12,9 +18,7 @@ import { AdminService } from "src/services/admin.service";
 @ApiBearerAuth()
 @Authentication()
 export class AdminController {
-  constructor(
-    private readonly adminService: AdminService,
-  ) {}
+  constructor(private readonly adminService: AdminService) {}
 
   @ApiBody({
     type: ApproveQuestionRequest,
@@ -36,8 +40,12 @@ export class AdminController {
     files: { audio?: Express.Multer.File; image?: Express.Multer.File },
     @Body() request: CreateStoryRequest,
   ) {
-    console.log(files)
-    return await this.adminService.createStory(request, files.audio[0].filename, files.image[0].filename)
+    console.log(files);
+    return await this.adminService.createStory(
+      request,
+      files.audio[0].filename,
+      files.image[0].filename,
+    );
   }
 
   @ApiBody({
@@ -52,6 +60,10 @@ export class AdminController {
     files: { audio?: Express.Multer.File; image?: Express.Multer.File },
     @Body() request: CreateStoryRequest,
   ) {
-    await this.adminService.updateStory(request, files.audio[0].filename, files.image[0].filename)
+    await this.adminService.updateStory(
+      request,
+      files.audio[0].filename,
+      files.image[0].filename,
+    );
   }
 }

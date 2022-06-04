@@ -1,7 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsEnum, IsOptional, IsString } from "class-validator";
-import { GetQuestionType, Level, QuestionStatus } from "src/common/constants";
-import { PagingRequest } from "./paging.request";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+import { GetQuestionType, Level, QuestionStatus } from 'src/common/constants';
+import { PagingRequest } from './paging.request';
 
 export class DoQuestionRequest {
   @ApiProperty()
@@ -10,7 +10,7 @@ export class DoQuestionRequest {
 }
 
 export class GetQuestionRequest extends PagingRequest {
-  @ApiProperty({example: `${Level.EASY} | ${Level.MEDIUM} | ${Level.HARD}`})
+  @ApiProperty({ example: `${Level.EASY} | ${Level.MEDIUM} | ${Level.HARD}` })
   @IsEnum(Level)
   @IsOptional()
   level: Level;
@@ -20,7 +20,9 @@ export class GetQuestionRequest extends PagingRequest {
   @IsOptional()
   search: string;
 
-  @ApiProperty({example: `${GetQuestionType.ACTIVE} | ${GetQuestionType.INACTIVE} | ${GetQuestionType.DONE} | ${GetQuestionType.MINE} | ${GetQuestionType.NOT_DONE}`})
+  @ApiProperty({
+    example: `${GetQuestionType.ACTIVE} | ${GetQuestionType.INACTIVE} | ${GetQuestionType.DONE} | ${GetQuestionType.MINE} | ${GetQuestionType.NOT_DONE}`,
+  })
   @IsEnum(GetQuestionType)
   type: number;
 }
@@ -41,4 +43,3 @@ export class ApproveQuestionRequest {
   @IsEnum(QuestionStatus)
   status: number;
 }
-

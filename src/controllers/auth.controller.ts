@@ -3,7 +3,12 @@ import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CurrUser } from 'src/common/decoraters/user.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { LoginRequest, SignupRequest } from 'src/dto';
-import { ChangePasswordRequest, CheckOtpRequest, ForgotPasswordRequest, ResetPasswordRequest } from 'src/dto/forgot-pass.request';
+import {
+  ChangePasswordRequest,
+  CheckOtpRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from 'src/dto/forgot-pass.request';
 import { User } from 'src/entities';
 // import { JwtAuthGuard } from 'src/security/jwt-auth.guard';
 import { AuthService } from 'src/services/auth.service';
@@ -29,7 +34,7 @@ export class AuthController {
   }
 
   @ApiBody({
-    type: ForgotPasswordRequest
+    type: ForgotPasswordRequest,
   })
   @Post('forgot-password')
   async forgotPassword(@Body('email') email: string) {
@@ -37,7 +42,7 @@ export class AuthController {
   }
 
   @ApiBody({
-    type: CheckOtpRequest
+    type: CheckOtpRequest,
   })
   @Post('check-otp')
   async checkOtp(@Body() input: CheckOtpRequest) {

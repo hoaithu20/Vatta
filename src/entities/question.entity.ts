@@ -1,11 +1,20 @@
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { Level, QuestionStatus } from "../common/constants";
-import { Answer } from "./answer.entity";
-import { Packages } from "./package.entity";
-import { User } from "./user.entity";
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Level, QuestionStatus } from '../common/constants';
+import { Answer } from './answer.entity';
+import { Packages } from './package.entity';
+import { User } from './user.entity';
 
-@Entity({tableName: 'question'})
-export class Question{
+@Entity({ tableName: 'question' })
+export class Question {
   @PrimaryKey()
   id: number;
 
@@ -15,7 +24,7 @@ export class Question{
   @OneToMany(() => Answer, (a) => a.question)
   answers = new Collection<Answer>(this);
 
-  @ManyToMany(() => Packages, p => p.questions)
+  @ManyToMany(() => Packages, (p) => p.questions)
   packages = new Collection<Packages>(this);
 
   @Property()
@@ -45,6 +54,6 @@ export class Question{
   @Property()
   createdAt: Date = new Date();
 
-  @Property({onUpdate: () => new Date() })
+  @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }

@@ -1,11 +1,11 @@
-import { MikroOrmModule } from "@mikro-orm/nestjs";
-import { Module } from "@nestjs/common";
-import { MulterModule } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { UserController } from "src/controllers/user.controller";
-import { Profile, User } from "src/entities";
-import { UserService } from "src/services/user.service";
-import { ConvertFile } from "src/utils/helper";
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { Module } from '@nestjs/common';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { UserController } from 'src/controllers/user.controller';
+import { Profile, User } from 'src/entities';
+import { UserService } from 'src/services/user.service';
+import { ConvertFile } from 'src/utils/helper';
 
 @Module({
   imports: [
@@ -21,6 +21,6 @@ import { ConvertFile } from "src/utils/helper";
   ],
   providers: [UserService],
   controllers: [UserController],
-  exports: [UserService]
+  exports: [UserService],
 })
 export class UserModule {}

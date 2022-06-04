@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiBody, ApiTags } from "@nestjs/swagger";
-import { DictionaryRequest } from "src/dto";
-import { DictionaryService } from "src/services/dictionnary.service";
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { DictionaryRequest } from 'src/dto';
+import { DictionaryService } from 'src/services/dictionnary.service';
 
 @ApiTags('api/dictionary')
 @Controller('api/dictionary')
 export class DictionaryController {
-  constructor(
-    private readonly dictionaryService: DictionaryService
-  ) {}
+  constructor(private readonly dictionaryService: DictionaryService) {}
 
   @Get('craw')
   async crawData() {
@@ -16,18 +14,18 @@ export class DictionaryController {
   }
 
   @ApiBody({
-    type: DictionaryRequest
+    type: DictionaryRequest,
   })
   @Post('find')
   async dictionary(@Body() request: DictionaryRequest) {
     return await this.dictionaryService.dictionary(request);
-  } 
+  }
 
   @ApiBody({
-    type: DictionaryRequest
+    type: DictionaryRequest,
   })
   @Post('suggest')
   async suggest(@Body() request: DictionaryRequest) {
     return await this.dictionaryService.suggestString(request);
-  } 
+  }
 }

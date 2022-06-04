@@ -1,10 +1,17 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
-import { Authentication, CurrUser } from "src/common/decoraters";
-import { CreatePackageRequest, DoPackageRequest, GetDetailHistoryRequest, GetDetailPackageRequest, GetLeaderBoardRequest, PagingRequest } from "src/dto";
-import { User } from "src/entities";
-import { PaginateResult } from "src/responses/paginateResult";
-import { PackageService } from "src/services/package.service";
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Authentication, CurrUser } from 'src/common/decoraters';
+import {
+  CreatePackageRequest,
+  DoPackageRequest,
+  GetDetailHistoryRequest,
+  GetDetailPackageRequest,
+  GetLeaderBoardRequest,
+  PagingRequest,
+} from 'src/dto';
+import { User } from 'src/entities';
+import { PaginateResult } from 'src/responses/paginateResult';
+import { PackageService } from 'src/services/package.service';
 
 @ApiTags('api/package')
 @Controller('api/package')

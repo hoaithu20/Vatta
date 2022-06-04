@@ -1,12 +1,19 @@
-import { Collection, Entity, OneToMany, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { UserRole, UserStatus } from "../common/constants";
-import { History } from "./history.entity";
-import { Point } from "./point.entity";
-import { Question } from "./question.entity";
-import { Packages } from "./package.entity";
-import { Profile } from "./profile.entity";
+import {
+  Collection,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { UserRole, UserStatus } from '../common/constants';
+import { History } from './history.entity';
+import { Point } from './point.entity';
+import { Question } from './question.entity';
+import { Packages } from './package.entity';
+import { Profile } from './profile.entity';
 
-@Entity({tableName: 'user'})
+@Entity({ tableName: 'user' })
 export class User {
   @PrimaryKey()
   id: number;
@@ -38,7 +45,7 @@ export class User {
   @OneToMany(() => History, (h) => h.user)
   histories = new Collection<History>(this);
 
-  @OneToOne(() => Profile, p => p.user)
+  @OneToOne(() => Profile, (p) => p.user)
   profile: Profile;
 
   @OneToMany(() => Point, (p) => p.user)
@@ -49,5 +56,4 @@ export class User {
 
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
-
 }

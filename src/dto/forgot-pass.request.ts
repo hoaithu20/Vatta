@@ -1,6 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Matches } from "class-validator";
-import { ErrorCode } from "src/common/constants";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Matches,
+} from 'class-validator';
+import { ErrorCode } from 'src/common/constants';
 
 export class ForgotPasswordRequest {
   @ApiProperty()
@@ -38,7 +44,6 @@ export class ResetPasswordRequest {
     message: ErrorCode.INVALID_PASSWORD_FORMAT,
   })
   confirmPassword: string;
-
 }
 
 export class ChangePasswordRequest {

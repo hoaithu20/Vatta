@@ -6,6 +6,6 @@ export default () => ({
   authConfig: {
     secretKey: process.env.SECRET_KEY,
     expiredToken: process.env.EXPIRED_TOKEN,
-    expiredOTP: process.env.EXPIRED_OTP
-  }
+    expiredOTP: process.env.EXPIRED_OTP,
+  },
 });

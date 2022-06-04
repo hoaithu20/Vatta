@@ -1,25 +1,33 @@
-import { Body, Controller, Get, Post, Query, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Authentication } from "src/common/decoraters/auth.decorator";
-import { CurrUser } from "src/common/decoraters/user.decorator";
-import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
-import { UpdateProfileRequest } from "src/dto/user.request";
-import { User } from "src/entities";
-import { UserService } from "src/services/user.service";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Authentication } from 'src/common/decoraters/auth.decorator';
+import { CurrUser } from 'src/common/decoraters/user.decorator';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { UpdateProfileRequest } from 'src/dto/user.request';
+import { User } from 'src/entities';
+import { UserService } from 'src/services/user.service';
 
 @Controller('/api/user')
 @ApiTags('/api/user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @ApiBearerAuth()
   @Authentication()
   @Get('profile')
   async getProfile(@CurrUser() user: User) {
-    return await this.userService.getProfile(user.id)
+    return await this.userService.getProfile(user.id);
   }
 
   @Authentication()
@@ -31,11 +39,11 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
     @Body() input: UpdateProfileRequest,
   ) {
-    return await this.userService.updateProfile(user.id, input, file?.filename )
+    return await this.userService.updateProfile(user.id, input, file?.filename);
   }
 
- // @Get('avatar/:img?')
- @Get('file')
+  // @Get('avatar/:img?')
+  @Get('file')
   async getAvatar(@Query('file') file: string, @Res() res) {
     return res.sendFile(file, {
       root: 'upload',

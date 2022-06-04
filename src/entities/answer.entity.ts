@@ -1,8 +1,14 @@
-import {Collection, Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { Question } from "./question.entity";
+import {
+  Collection,
+  Entity,
+  ManyToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Question } from './question.entity';
 
-@Entity({tableName: 'answer'})
-export class Answer{
+@Entity({ tableName: 'answer' })
+export class Answer {
   @PrimaryKey()
   id: number;
 

@@ -1,6 +1,6 @@
-import { Entity, Index, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Index, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity({tableName: 'dictionary'})
+@Entity({ tableName: 'dictionary' })
 export class Dictionary {
   @PrimaryKey()
   id: number;
@@ -8,13 +8,13 @@ export class Dictionary {
   @Property()
   @Index()
   english: string;
- 
+
   @Property()
   type: string;
 
   @Property()
   pronunciation: string;
 
-  @Property({type: 'json'})
+  @Property({ type: 'json' })
   vietnamese: string[];
 }
