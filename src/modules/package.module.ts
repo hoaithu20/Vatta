@@ -1,15 +1,15 @@
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
-import { PackageController } from "src/controllers/package.controller";
-import { Packages } from "src/entities";
+import { PackagesController } from "src/controllers/package.controller";
+import { History, Packages, Point, Question, Week } from "src/entities";
 import { PackageService } from "src/services/package.service";
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Packages])
+    MikroOrmModule.forFeature([Packages, Question, Week, History, Point])
   ],
   providers: [PackageService],
-  controllers: [PackageController],
+  controllers: [PackagesController],
   exports: [PackageService]
 })
-export class TopicModule {}
+export class PackageModule {}

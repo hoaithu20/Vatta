@@ -7,16 +7,16 @@ export class Point {
   id: number;
 
   @ManyToOne(() => User)
-  user = new Collection<User>(this);
+  user: User;
 
   @Property({default: 0})
   point: number;
 
   @Property({ default: 0 })
   week: number;
-
+ 
   constructor(user: User, point: number, week: number) {
-    this.user.add(user);
+    this.user = user
     this.point = point;
     this.week = week;
   }

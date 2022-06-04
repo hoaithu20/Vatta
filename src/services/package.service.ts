@@ -2,9 +2,9 @@ import { EntityRepository } from "@mikro-orm/mysql";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ErrorCode, QuestionStatus, WeekStatus } from "src/common/constants";
-import { CreatePackageRequest, DoPackageRequest, GetDetailHistoryRequest, GetDetailPackageRequest, PagingRequest } from "src/dto";
-import { Packages, Question, Week, History, User, QuestionHistory, Point } from "src/entities";
-import _ from 'lodash';
+import { CreatePackageRequest, DoPackageRequest, GetDetailHistoryRequest, GetDetailPackageRequest, GetLeaderBoardRequest, PagingRequest } from "src/dto";
+import { Packages, Question, Week, History, User, Point } from "src/entities";
+import _, { forEach } from 'lodash';
 import { MikroORM } from "@mikro-orm/core";
 
 @Injectable()
@@ -21,7 +21,7 @@ export class PackageService {
     private readonly historyRepository: EntityRepository<History>,
     @InjectRepository(Point)
     private readonly pointRepository: EntityRepository<Point>,
-  ) {}
+  ) { }
 
   async getAllPackage(request: PagingRequest) {
     const page = request.pageIndex || 1;
@@ -29,114 +29,106 @@ export class PackageService {
     const packages = this.packageRepository
       .createQueryBuilder('t')
       .select([
-        't.id as id', 
-        't.name as name', 
-        't.level as `level`', 
-        't.total_question as total', 
+        't.id',
+        't.name',
+        't.level',
+        't.total_question as total',
         't.time_out as time',
-        't.username as username'
+        'u.username'
       ])
       .leftJoin('t.user', 'u')
-      .where({'t.status': QuestionStatus.ACTIVE })
-      .orderBy({'p.id': "DESC"})
+      .where({ 't.status': QuestionStatus.ACTIVE })
+      .orderBy({ 't.id': "DESC" })
       .offset((page - 1) * pageSize)
       .limit(pageSize)
 
-    return await Promise.all([packages.execute(), packages. getCount()]);
+    return await Promise.all([packages.execute('all'), packages.getCount()]);
   }
 
   async getDetailPackage(request: GetDetailPackageRequest) {
     const pageIndex = request.pageIndex || 1;
     const pageSize = request.pageSize || 10;
 
-    const packages = await this.packageRepository
-      .createQueryBuilder('p')
-      .leftJoin('p.user', 'u')
-      .select([
-        'p.id as id',
-        'p.like as `like`',
-        'p.timeOut as time',
-        'p.status as `status`',
-        'p.level as `level`',
-        'p.total_question as totalQuestion',
-        'p.name as name',
-        'u.username as username',
-        'p.questionIds as questionIds'
-      ])
-      .where({'p.id': request.packageId })
-      .getSingleResult();
+    const packages = await this.packageRepository.findOne({ id: request.packageId })
     if (!packages) {
       throw new BadRequestException({
         code: ErrorCode.NOT_FOUND_PACKAGE,
       });
     }
-    const questions = await this.questionRepository
-      .createQueryBuilder('q')
-      .leftJoinAndSelect('q.answer', 'a')
-      // .where({q.id IN (:,arr)' {
-      //   arr: packages.questionIds,
-      // })
-      .getResultList()
-    const questionMap = questions.map((item) => ({
-      ...item,
-      answers: _.shuffle(
-        item.answers.getItems().map((i) => ({
-          id: i.id,
-          content: i.content,
-          description: i.description,
-          isTrue: i.isTrue,
-        })),
-      ),
-    }));
+    const questions = await packages.questions.matching({
+      offset: (pageIndex - 1) * pageSize,
+      limit: pageSize,
+      orderBy: { id: 'DESC' },
+      store: true
+    })
+    const questionMap = [];
+    for (const item of questions) {
+      const answer = await item.answers.loadItems();
+      questionMap.push({
+        id: item.id,
+        title: item.title,
+        status: item.status,
+        level: item.level,
+        totalAnswer: item.totalAnswer,
+        correctAnswer: item.correctAnswer,
+        answers: _.shuffle(
+          answer.map((i) => ({
+            id: i.id,
+            content: i.content,
+            description: i.description,
+            isTrue: i.isTrue,
+          })),
+        ),
+      })
+    }
     const packageMap = {
-      ...packages,
-      questions: _.shuffle(questionMap).slice(
-        (pageIndex - 1) * pageSize,
-        pageIndex * pageSize,
-      ),
+      id: packages.id,
+      status: packages.status,
+      totalQuestion: packages.totalQuestion,
+      level: packages.level,
+      timeOut: packages.timeOut,
+      name: packages.name,
+      username: packages.user?.username,
+      questions: _.shuffle(questionMap)
     };
     return [packageMap, packages.totalQuestion];
   }
 
+
   async createPackage(userId: number, request: CreatePackageRequest) {
     const questions = await this.questionRepository.find({ id: { $in: request.question } })
-      const newPackage = await this.packageRepository.create({
-        user: userId as any,
-        totalQuestion: request.question.length,
-        timeOut: request.time,
-        level: request.level,
-        isHidden: request.isHidden,
-        name: request.name,
-        questions: questions
-      });
-      await this.orm.em.persistAndFlush(newPackage)
+    const newPackage = await this.packageRepository.create({
+      user: userId as any,
+      totalQuestion: request.question.length,
+      timeOut: request.time,
+      level: request.level,
+      isHidden: request.isHidden,
+      name: request.name,
+      questions: questions
+    });
+    await this.orm.em.persistAndFlush(newPackage)
   }
 
   async todoPackage(user: User, request: DoPackageRequest) {
     let countTrue = 0;
     const resultArr = [];
-    const currentWeek = await this.weekRepository.findOne({status: WeekStatus.ACTIVE})
-    const packages = await this.packageRepository.findOne({id: request.packageId})
+    const currentWeek = await this.weekRepository.findOne({ status: WeekStatus.ACTIVE })
+    const packages = await this.packageRepository.findOne({ id: request.packageId })
     if (!packages) {
       throw new BadRequestException({
         code: ErrorCode.NOT_FOUND_PACKAGE,
       });
     }
 
-    const questionIds = request.questions.map(({questionId}) => questionId);
-      // _.map(request.questions, 'questionId').length == 0
-      //   ? null
-      //   : _.map(request.questions, 'questionId');
-    const questions = await this.questionRepository
-      .createQueryBuilder('q')
-      .leftJoinAndSelect('q.answers', 'a')
-      .where({'q.id' : {$in: questionIds}})
-      .getResultList();
+    const questions = await packages.questions.matching({
+      store: true
+    })
 
     for (const item of request.questions) {
       const question = questions.find((question) => question.id == item.questionId);
-      const answerIds = question.answers.getItems().map((answer) => answer.id)
-      if (!answerIds.includes(item.answerId)) {
+      const answers = await question.answers.loadItems();
+      const answerId = answers.map((i) => i.id);
+      if (!answerId.includes(item.answerId)) {
         throw new BadRequestException({
           code: ErrorCode.ANSWER_NOT_IN_QUESTION,
         });
@@ -145,47 +137,38 @@ export class PackageService {
         countTrue++;
       }
       resultArr.push({
-        ...question,
+        id: question.id,
+        title: question.title,
+        status: question.status,
+        level: question.level,
+        totalAnswer: question.totalAnswer,
+        correctAnswer: question.correctAnswer,
+        answers: answers.map((a) => ({
+          id: a.id,
+          content: a.content,
+          description: a.description,
+          isTrue: a.isTrue,
+        })),
         check: question && question.correctAnswer === item.answerId,
         answerId: item.answerId,
       });
     }
-    
-    //await this.connection.transaction(async (manager) => {
-      // await this.connection.manager
-      //   .createQueryBuilder()
-      //   .update(History)
-      //   .set({ isCurrent: false })
-      //   .where('package_id = :packageId AND is_current = true', {
-      //     packageId: request.packageId,
-      //   })
-      //   .execute();
-      // const questionMap: QuestionMap[] = [];
-      // for (const i of request.questions) {
-      //   const question: QuestionMap = {
-      //     [i.questionId]: i.answerId,
-      //   };
-      //   questionMap.push(question);
-      // }
-      // console.log('yoona', questionMap);
-      // console.log(request.packageId);
 
-      const newHistory = new History();
-      newHistory.user = user;
-      newHistory.point = countTrue;
-      newHistory.package = packages;
-      newHistory.questionMap = request.questions;
+    const newHistory = new History();
+    newHistory.user = user;
+    newHistory.point = countTrue;
+    newHistory.package = packages;
+    newHistory.questionMap = request.questions;
 
-      let points = await this.pointRepository.findOne({user: user.id});
-      
-      if (!points) {
+    let points = await this.pointRepository.findOne({ user: user.id });
+
+    if (!points) {
       points = new Point(user, countTrue, currentWeek.id);
-      } else {
-        points.point = points.point + countTrue;
-      }
+    } else {
+      points.point = points.point + countTrue;
+    }
 
-     await this.orm.em.persistAndFlush([newHistory, points])
-
+    await this.orm.em.persistAndFlush([newHistory, points])
     return resultArr;
   }
 
@@ -193,8 +176,25 @@ export class PackageService {
     const page = request.pageIndex || 1;
     const pageSize = request.pageSize || 10;
 
+    // const query = this.historyRepository
+    //   .createQueryBuilder('h')
+    //   .select([
+    //     'h.package_id as packageId',
+    //     'p.name as name',
+    //     'h.point as point',
+    //     'h.time as time',
+    //     'u.id as userId',
+    //     'u.username as username',
+    //   ])
+    //   .leftJoin('h.package', 'p')
+    //   .leftJoin('p.user', 'u')
+    //   .where({ 'h.user_id': { userId } })
+    //   .orderBy({ 'h.created_at': 'DESC' })
+    //   .offset((page - 1) * pageSize)
+    //   .limit(pageSize)
     const query = this.historyRepository
       .createQueryBuilder('h')
+      .where({ user: userId })
       .select([
         'h.package_id as packageId',
         'p.name as name',
@@ -205,46 +205,42 @@ export class PackageService {
       ])
       .leftJoin('h.package', 'p')
       .leftJoin('p.user', 'u')
-      .where({'h.user_id' : {userId}})
-      .orderBy({'h.created_at': 'DESC'})
       .offset((page - 1) * pageSize)
       .limit(pageSize)
-
+      .orderBy({ createdAt: 'DESC' })
     const [data, count] = await Promise.all([
-      query
-        // .clone()
-        // .offset((page - 1) * pageSize)
-        // .limit(pageSize)
-        .getSingleResult(),
-       query.getCount(),
+      query.execute('all'),
+      query.getCount(),
     ]);
 
-    return [data, count];
+    return [data, count]
   }
 
   async getDetailPackageHistory(userId: number, packageId: number) {
-    const histories = await this.historyRepository
-      .createQueryBuilder('h')
-      .leftJoinAndSelect('h.package', 'p')
+    const packages = await this.packageRepository
+      .createQueryBuilder('p')
+      .leftJoinAndSelect('p.histories', 'h')
       // .where('h.user_id = :userId AND h.package_id = :packageId', {
       //   userId,
       //   packageId,
       // })
-      .where({$and: [{'h.user_id' : userId}, {'h.package_id' : packageId}]})
-      .orderBy({'h.created_at': 'DESC'})
-      .getResultList();
-    const points = histories.map((history) => history.point);
+      .where({ $and: [{ 'h.user_id': userId }, { 'h.package_id': packageId }] })
+      .orderBy({ 'h.created_at': 'DESC' })
+      .getSingleResult();
+
+    console.log(packages)
+    const histories = packages.histories.getItems();
+    const points = histories.map((i) => i.point)
     const maxPoint = Math.max(...points);
-    const sumPoint = parseInt(
-      _.reduce(points, function (sum, num) {
-        return sum + num;
-      }, 0),
-    );
+    let sumPoint = 0;
+    points.forEach(i => {
+      sumPoint = sumPoint + i;
+    });
     return {
       maxPoint,
       averagePoint: (sumPoint / histories.length).toFixed(2),
-      totalQuestion: histories[0].package.totalQuestion,
-      namePackage: histories[0].package.name,
+      totalQuestion: packages.totalQuestion,
+      namePackage: packages.name,
       items: histories.map((item) => ({
         historyId: item.id,
         time: item.time,
@@ -256,47 +252,42 @@ export class PackageService {
   }
 
   async getDetailHistory(userId: number, request: GetDetailHistoryRequest) {
-    
-    const history = await this.historyRepository.findOne({user: userId, id: request.historyId})
+
+    const history = await this.historyRepository.findOne({ user: userId, id: request.historyId })
     if (!history) {
       throw new BadRequestException({
         code: ErrorCode.NOT_FOUND_HISTORY,
       });
     }
-    const packages = await this.packageRepository.findOne({id: history.package.id})
+    console.log(history)
+    const packages = await this.packageRepository.findOne({ id: history.package.id })
     if (!packages) {
       throw new BadRequestException({
         code: ErrorCode.NOT_FOUND_PACKAGE,
       });
     }
-    const questionIds = packages.questions.getItems().map((q) => q.id)
-    const questions = await this.questionRepository
-      .createQueryBuilder('q')
-      .leftJoinAndSelect('q.answers', 'a')
-      .where({'q.id': {$in : questionIds} })
-      .getResultList();
-    console.log(questions)
+    const questions = await packages.questions.matching({
+      store: true
+    })
+    console.log('yoona',history.questionMap)
     const questionArr = [];
-    console.log(history.questionMap);
     for (const item of history.questionMap) {
-      const key = Object.keys(item);
-      console.log(typeof key[0]);
-      const question = this.findQuestionById(questions, Number(key[0]));
-      console.log('question', question)
+      const question = questions.find((q) => q.id === item.questionId);
+      const answer = await question.answers.loadItems();
       questionArr.push({
         question: {
           id: question.id,
           level: question.level,
           title: question.title,
           correctAnswer: question.correctAnswer,
-          answer: question.answers.map((a) => ({
+          answer: answer.map((a) => ({
             id: a.id,
             content: a.content,
             description: a.description,
             isTrue: a.isTrue,
           })),
         },
-        answerPick: item[key[0]],
+        answerPick: item.answerId,
       });
     }
     console.log(questionArr);
@@ -310,10 +301,12 @@ export class PackageService {
   }
 
   async getLeaderBoard(request: GetLeaderBoardRequest) {
-    // const page = request.pageIndex || 1;
-    // const pageSize = request.pageSize || 10;
 
-    const query = await this.pointRepo
+    const week = await this.weekRepository.findOne({status: WeekStatus.ACTIVE})
+    if(!week) return {
+      mess: 'Tuần mới chưa kích hoạt'
+    }
+     const point = await this.pointRepository
       .createQueryBuilder('p')
       .select([
         'p.point as point',
@@ -323,20 +316,11 @@ export class PackageService {
       ])
       .leftJoin('p.user', 'u')
       .leftJoin('u.profile', 'pp')
-      .where('p.week = :week AND p.point > 0', { week: request.week })
-      .orderBy('p.point', 'DESC')
+      .where('p.week = ? AND p.point > 0', [request.week ])
+      .orderBy({ 'p.point': 'DESC' })
       .offset(0)
       .limit(10)
-      .getRawMany();
-    return query.map((item) => ({
-      ...item,
-      point: formatDecimal(item.point),
-    }));
-  }
-
-  findQuestionById(questions, id) {
-    return _.find(questions, {
-      id: id,
-    });
+      .execute();
+    return point;
   }
 }

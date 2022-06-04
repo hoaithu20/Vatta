@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { MikroORM } from '@mikro-orm/core';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import swaggerConfig from './common/configs/swagger.config';
 import { normalError } from './utils/exception.util';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { AllExceptionFilter } from './common/exceptions/exception.filter';
+import { MikroORM } from '@mikro-orm/core';
 
 (async function bootstrap() {
   const app = await NestFactory.create(AppModule);

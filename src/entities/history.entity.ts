@@ -1,5 +1,4 @@
 import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
-import { QuestionHistory } from "./question-history.entity";
 import { Packages } from "./package.entity";
 import { User } from "./user.entity";
 
@@ -16,11 +15,8 @@ export class History {
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Packages)
-  package: Packages;
-
-  @OneToMany(() => QuestionHistory, qh => qh.history)
-  questionHistories = new Collection<QuestionHistory>(this);
+  @ManyToOne(() => Packages, { wrappedReference: true, nullable: true })
+  package?: Packages;
 
   @Property({default: 0})
   point: number;
@@ -31,16 +27,16 @@ export class History {
   // @Property({default: true })
   // isCurrent: boolean;
 
-  // @Property({ nullable: true, default: null, type: 'json' })
-  // questions: number[];
+  @Property({ nullable: true, default: null, type: 'json' })
+  questions: number[];
 
-  @Property({type: 'json', default: null })
+  @Property({type: 'json', nullable: true })
   questionMap: QuestionMap[];
 
   @Property({name: 'created_at'})
-  createdAt = new Date();
+  createdAt: Date = new Date();
 
   @Property({ name: 'updated_at', onUpdate: () => new Date() })
-  updatedAt = new Date();
+  updatedAt: Date = new Date();
 }
 

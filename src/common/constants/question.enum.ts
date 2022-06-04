@@ -11,9 +11,9 @@ export enum Level {
 }
 
 export enum GetQuestionType {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  MINE = 'MINE',
-  DONE = 'DONE',
-  NOT_DONE = 'NOT_DONE',
+  ACTIVE,
+  INACTIVE,
+  MINE,
+  DONE,
+  NOT_DONE,
 }

@@ -16,11 +16,11 @@ export class Answer{
   isTrue: boolean;
 
   @ManyToOne(() => Question)
-  question = new Collection<Question>(this);
+  question: Question;
 
   @Property()
-  createdAt = new Date();
+  createdAt: Date = new Date();
 
   @Property({ onUpdate: () => new Date() })
-  updatedAt = new Date();
+  updatedAt: Date = new Date();
 }

@@ -1,4 +1,4 @@
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Level, QuestionStatus } from "../common/constants";
 import { Answer } from "./answer.entity";
 import { Packages } from "./package.entity";
@@ -9,8 +9,8 @@ export class Question{
   @PrimaryKey()
   id: number;
 
-  @ManyToOne(() => User, {name: 'creator_id'})
-  user = new Collection<User>(this);
+  @ManyToOne(() => User)
+  user: User;
 
   @OneToMany(() => Answer, (a) => a.question)
   answers = new Collection<Answer>(this);
@@ -35,6 +35,9 @@ export class Question{
 
   @Property()
   totalAnswer: number;
+
+  // @OneToOne(() => Answer)
+  // correctAnswer: Answer;
 
   @Property({ default: 0 })
   correctAnswer: number;

@@ -11,7 +11,7 @@ export class Profile {
   avatar: string;
 
   @OneToOne(() => User)
-  user = new Collection<User>(this);
+  user: User;
 
   @Property({ nullable: true })
   dateOfBirth: Date;
