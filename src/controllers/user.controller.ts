@@ -43,9 +43,9 @@ export class UserController {
   }
 
   // @Get('avatar/:img?')
-  @Get('file')
-  async getAvatar(@Query('file') file: string, @Res() res) {
-    return res.sendFile(file, {
+  @Get('avatar/:img?')
+  async getAvatar(@Query('img') img: string, @Res() res) {
+    return res.sendFile(img, {
       root: 'upload',
     });
   }

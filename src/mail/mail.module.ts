@@ -22,7 +22,7 @@ dotenv.config();
         from: '"Vatta Toeic" <noreply@example.com>',
       },
       template: {
-        dir: path.resolve(process.cwd(), 'src/mail/template'),
+        dir: path.resolve(process.cwd(), 'static/template'),
         adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
         options: {
           strict: true,
