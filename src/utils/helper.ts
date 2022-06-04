@@ -1,6 +1,6 @@
 export class ConvertFile {
   static customFileName(req, file, cb) {
-    let customFile = Date.now()+ '_' + randomString(5);
+    let customFile = Date.now() + '_' + randomString(5);
     let fileExtention = '';
     if (file.mimetype.indexOf('jpeg') > -1) {
       fileExtention = '.jpg';

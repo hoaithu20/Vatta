@@ -1,48 +1,48 @@
-import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
-import { QuestionHistory } from "./question-history.entity";
-import { Topic } from "./topic.entity";
-import { User } from "./user.entity";
+import {
+  Collection,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Packages } from './package.entity';
+import { User } from './user.entity';
 
 export interface QuestionMap {
-  [questionId: number]: number;
+  questionId: number;
+  answerId: number;
 }
 
-@Entity({tableName: 'history'})
+@Entity({ tableName: 'history' })
 export class History {
   @PrimaryKey()
   id: number;
 
-  @ManyToOne(() => User, {name: 'user_id'})
+  @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Topic, {name: 'topic_id'})
-  topic: Topic;
+  @ManyToOne(() => Packages, { wrappedReference: true, nullable: true })
+  package?: Packages;
 
-  @OneToMany(() => QuestionHistory, qh => qh.history)
-  questionHistories = new Collection<QuestionHistory>(this);
+  @Property({ default: 0 })
+  point: number;
 
-  @Property({
-    name: 'point',
-    type: 'decimal',
-    precision: 5,
-    scale: 2,
-    default: 0,
-  })
-  point: string;
+  @Property({ default: 0 })
+  time: number;
 
-  @Property({ name: 'is_current', default: true })
-  isCurrent: boolean;
+  // @Property({default: true })
+  // isCurrent: boolean;
 
-  // @Property({ nullable: true, default: null, type: 'json' })
-  // questions: number[];
+  @Property({ nullable: true, default: null, type: 'json' })
+  questions: number[];
 
-  // @Property({ name: 'question_map', type: 'json', default: null })
-  // questionMap: QuestionMap[];
+  @Property({ type: 'json', nullable: true })
+  questionMap: QuestionMap[];
 
-  @Property({name: 'created_at'})
-  createdAt = new Date();
+  @Property({ name: 'created_at' })
+  createdAt: Date = new Date();
 
   @Property({ name: 'updated_at', onUpdate: () => new Date() })
-  updatedAt = new Date();
+  updatedAt: Date = new Date();
 }
-

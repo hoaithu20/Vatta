@@ -10,7 +10,7 @@ import { Otp } from 'src/entities/otp.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { AuthService } from 'src/services/auth.service';
 import * as dotenv from 'dotenv';
-dotenv.config()
+dotenv.config();
 @Module({
   imports: [
     JwtModule.register({

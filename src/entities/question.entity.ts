@@ -1,22 +1,31 @@
-import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
-import { Level, QuestionStatus } from "../common/constants";
-import { Answer } from "./answer.entity";
-import { Topic } from "./topic.entity";
-import { User } from "./user.entity";
+import {
+  Collection,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Level, QuestionStatus } from '../common/constants';
+import { Answer } from './answer.entity';
+import { Packages } from './package.entity';
+import { User } from './user.entity';
 
-@Entity({tableName: 'question'})
-export class Question{
+@Entity({ tableName: 'question' })
+export class Question {
   @PrimaryKey()
   id: number;
 
-  @ManyToOne(() => User, {name: 'creator_id'})
+  @ManyToOne(() => User)
   user: User;
 
   @OneToMany(() => Answer, (a) => a.question)
   answers = new Collection<Answer>(this);
 
-  @ManyToOne(() => Topic, {name: 'topic_id'})
-  topic: Topic;
+  @ManyToMany(() => Packages, (p) => p.questions)
+  packages = new Collection<Packages>(this);
 
   @Property()
   title: string;
@@ -33,15 +42,18 @@ export class Question{
   @Property({ default: 0 })
   like: number;
 
-  @Property({ name: 'total_answer' })
+  @Property()
   totalAnswer: number;
 
-  @Property({ name: 'correct_answer', default: 0 })
+  // @OneToOne(() => Answer)
+  // correctAnswer: Answer;
+
+  @Property({ default: 0 })
   correctAnswer: number;
 
-  @Property({name: 'created_at'})
-  createdAt = new Date();
+  @Property()
+  createdAt: Date = new Date();
 
-  @Property({ name: 'updated_at', onUpdate: () => new Date() })
-  updatedAt = new Date();
+  @Property({ onUpdate: () => new Date() })
+  updatedAt: Date = new Date();
 }

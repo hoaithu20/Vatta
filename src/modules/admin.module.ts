@@ -2,14 +2,14 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { UserController } from 'src/controllers/user.controller';
-import { Profile, User } from 'src/entities';
-import { UserService } from 'src/services/user.service';
+import { AdminController } from 'src/controllers/admin.controller';
+import { Question, Story } from 'src/entities';
+import { AdminService } from 'src/services/admin.service';
 import { ConvertFile } from 'src/utils/helper';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([User, Profile]),
+    MikroOrmModule.forFeature([Story, Question]),
     MulterModule.registerAsync({
       useFactory: () => ({
         storage: diskStorage({
@@ -19,8 +19,8 @@ import { ConvertFile } from 'src/utils/helper';
       }),
     }),
   ],
-  providers: [UserService],
-  controllers: [UserController],
-  exports: [UserService],
+  providers: [AdminService],
+  controllers: [AdminController],
+  exports: [AdminService],
 })
-export class UserModule {}
+export class AdminModule {}

@@ -31,7 +31,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       console.log('Exception: ', exception);
     }
     if (exception instanceof BadRequestException) {
-      console.log('yoona')
+      console.log('yoona');
       const errorResponse = exception.getResponse();
       response.status(HttpStatus.BAD_REQUEST).json(errorResponse);
     } else if (exception instanceof UnauthorizedException) {

@@ -1,8 +1,14 @@
-import { Entity, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
-import { Sex } from "src/common/constants";
-import { User } from "./user.entity";
+import {
+  Collection,
+  Entity,
+  OneToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Sex } from 'src/common/constants';
+import { User } from './user.entity';
 
-@Entity({tableName: 'profile'})
+@Entity({ tableName: 'profile' })
 export class Profile {
   @PrimaryKey()
   id: number;
@@ -13,16 +19,15 @@ export class Profile {
   @OneToOne(() => User)
   user: User;
 
-  @Property({ name: 'date_of_birth', nullable: true })
+  @Property({ nullable: true })
   dateOfBirth: Date;
 
   @Property({ nullable: true })
   sex: Sex;
 
-  @Property({name: 'created_at'})
+  @Property()
   createdAt: Date = new Date();
 
-  @Property({ name: 'updated_at', onUpdate: () => new Date() })
+  @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }
-

@@ -1,18 +1,18 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import { WeekStatus } from "../common/constants";
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { WeekStatus } from '../common/constants';
 
-@Entity({tableName: 'week'})
+@Entity({ tableName: 'week' })
 export class Week {
   @PrimaryKey()
   id: number;
 
-  @Property({ default: 1 })
+  @Property({ default: 'ACTIVE' })
   status: WeekStatus;
 
-  @Property({ name: 'start_time' })
+  @Property()
   startTime: Date;
 
-  @Property({ name: 'end_time' })
+  @Property()
   endTime: Date;
 
   @Property()

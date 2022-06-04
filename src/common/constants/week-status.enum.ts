@@ -1,4 +1,4 @@
 export enum WeekStatus {
-  ACTIVE,
-  INACTIVE,
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }
