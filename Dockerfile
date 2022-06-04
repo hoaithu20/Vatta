@@ -19,12 +19,13 @@ WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/dist ./
 COPY --from=deps /usr/src/app/node_modules ./node_modules/
 COPY ./static ./static/
-COPY ./.env.dev ./
+# COPY ./.env.dev ./
+COPY ./.env ./
 
-# ENV DB_HOST db_host
+ENV DB_HOST db_host
 # ENV DB_NAME cam_cms
 # ENV DB_PORT 3306
 # ENV DB_USER root
-# ENV DB_PASSWORD root
+ENV DB_PASSWORD thuabcxyz
 EXPOSE 3000
 CMD ["node", "main.js"]
