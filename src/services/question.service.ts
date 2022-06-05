@@ -65,6 +65,7 @@ export class QuestionService {
       totalAnswer: item.totalAnswer,
       correctAnswer: item.correctAnswer,
       user: item.user.username,
+      level: item.level,
       answers: _.shuffle(
         item.answers.getItems().map((a) => ({
           id: a.id,
@@ -187,6 +188,7 @@ export class QuestionService {
       totalAnswer: item.totalAnswer,
       correctAnswer: item.correctAnswer,
       user: item.user.username,
+      level: item.level,
       answers: item.answers.getItems().map((a) => ({
         id: a.id,
         content: a.content,

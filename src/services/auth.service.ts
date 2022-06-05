@@ -110,7 +110,7 @@ export class AuthService {
       ),
     });
     await this.orm.em.persistAndFlush(otpEntity);
-    return user.id;
+    return otp;
   }
 
   async checkOtp(input: CheckOtpRequest) {

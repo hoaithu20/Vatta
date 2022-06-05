@@ -25,9 +25,18 @@ export class UserController {
 
   @ApiBearerAuth()
   @Authentication()
-  @Get('profile')
-  async getProfile(@CurrUser() user: User) {
-    return await this.userService.getProfile(user.id);
+  // @Post('profile')
+  // async getProfile(@CurrUser() user: User) {
+  //   return await this.userService.getProfile(user.id);
+  // }
+  @Post('profile/:userId?')
+  async getProfile(@CurrUser() user, @Query('user_id') userId?: number) {
+    console.log(userId);
+    let id = 0;
+    if (userId) {
+      id = userId;
+    } else id = user.id;
+    return await this.userService.getProfile(id);
   }
 
   @Authentication()

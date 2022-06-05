@@ -22,7 +22,7 @@ export class TransformInterceptor<T>
           baseResponse.data = {
             items: data.items,
             meta: {
-              total_count: data.count,
+              count: data.count,
             },
           };
         } else {

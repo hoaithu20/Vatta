@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -66,4 +67,15 @@ export class AdminController {
       files.image[0].filename,
     );
   }
+
+  @Get('end-week')
+  async endWeek() {
+    return this.adminService.endWeek();
+  }
+
+  @Get('get-static')
+  async getStatic() {
+    return this.adminService.getStatic()
+  }
 }
+

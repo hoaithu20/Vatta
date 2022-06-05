@@ -9,10 +9,10 @@ export class Week {
   @Property({ default: 'ACTIVE' })
   status: WeekStatus;
 
-  @Property()
+  @Property({nullable: true})
   startTime: Date;
 
-  @Property()
+  @Property({nullable: true})
   endTime: Date;
 
   @Property()

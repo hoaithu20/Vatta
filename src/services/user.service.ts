@@ -30,7 +30,7 @@ export class UserService {
         'p.sex as sex',
       ])
       .where({ 'u.id': userId })
-      .execute();
+      .execute('get');
     if (!profile) return;
     return profile;
   }
@@ -47,7 +47,7 @@ export class UserService {
     profile.dateOfBirth = input.date;
     profile.sex = input.sex;
     await this.orm.em.persistAndFlush(profile);
-    fs.unlinkSync(`./upload/${oldAvatar}`);
+    if(oldAvatar) fs.unlinkSync(`./upload/${oldAvatar}`);
     return profile;
   }
 }

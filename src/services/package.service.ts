@@ -175,6 +175,7 @@ export class PackageService {
     newHistory.point = countTrue;
     newHistory.package = packages;
     newHistory.questionMap = request.questions;
+    newHistory.time = request.time;
 
     let points = await this.pointRepository.findOne({ user: user.id });
 
