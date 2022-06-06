@@ -22,10 +22,11 @@ COPY ./static ./static/
 # COPY ./.env.dev ./
 COPY ./.env ./
 
-ENV DB_HOST db_host
+ENV MIKRO_ORM_HOST db-host
 # ENV DB_NAME cam_cms
 # ENV DB_PORT 3306
 # ENV DB_USER root
 ENV DB_PASSWORD thuabcxyz
+ENV MIKRO_ORM_TYPE mariadb
 EXPOSE 3000
 CMD ["node", "main.js"]

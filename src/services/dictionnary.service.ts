@@ -16,7 +16,7 @@ export class DictionaryService {
   async insertData() {
     console.log('Start....');
 
-    const liner = new lineByLine('./eng-viet.txt');
+    const liner = new lineByLine('static/eng-viet.txt');
     let line;
     let eng = '';
     let vietnamese: string[] = [];
@@ -26,7 +26,7 @@ export class DictionaryService {
       const text = line.toString() as string;
       if (text.charAt(0) == '@') {
         if (eng != '') {
-          this.orm.em.nativeInsert(Dictionary, {
+          await this.dictionaryRepo.createQueryBuilder().insert({
             english: eng,
             vietnamese: vietnamese,
             pronunciation: pronunciation,

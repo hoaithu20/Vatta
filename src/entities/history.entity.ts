@@ -34,7 +34,7 @@ export class History {
   // @Property({default: true })
   // isCurrent: boolean;
 
-  @Property({ nullable: true, default: null, type: 'json' })
+  @Property({type: 'json', nullable: true, default: null})
   questions: number[];
 
   @Property({ type: 'json', nullable: true })

@@ -82,12 +82,13 @@ export class QuestionService {
   async createQuestion(userId: number, request: CreateQuestionRequest) {
     const { title, level, answers } = request;
     const user = await this.userRepository.findOne({ id: userId });
+    console.log(user)
 
     const status =
-      user.role === UserRole.ADMIN
+      user.role == UserRole.ADMIN
         ? QuestionStatus.ACTIVE
         : QuestionStatus.INACTIVE;
-
+    console.log('a',status)
     const em = this.orm.em.fork();
     await em.begin();
 
@@ -152,6 +153,9 @@ export class QuestionService {
     if (history) {
       questionIds = history.questions;
     }
+    console.log('questionId', questionIds)
+    console.log('tyeof', typeof(questionIds));
+    
     const query = this.questionRepository
       .createQueryBuilder('q')
       .offset((pageIndex - 1) * pageSize)

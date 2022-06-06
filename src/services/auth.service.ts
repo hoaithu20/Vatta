@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
 import { SignupRequest } from 'src/dto';
 import { MikroORM } from '@mikro-orm/core';
-import { Profile, User } from 'src/entities';
+import { Point, Profile, User, Week } from 'src/entities';
 import { EntityRepository } from '@mikro-orm/mysql';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { MailService } from 'src/mail/mail.service';
@@ -17,6 +17,7 @@ import {
   CheckOtpRequest,
   ResetPasswordRequest,
 } from 'src/dto/forgot-pass.request';
+import { WeekStatus } from 'src/common/constants';
 
 @Injectable()
 export class AuthService {
@@ -52,6 +53,9 @@ export class AuthService {
       return { mess: ErrorCode.PASSWORD_NOT_MATCH };
     }
     try {
+      const week = await this.orm.em.findOneOrFail(Week, {
+        status: WeekStatus.ACTIVE,
+      });
       const password = await bcrypt.hash(request.password, 10);
       const newUser = this.userRepository.create({
         email: request.email,
@@ -61,6 +65,7 @@ export class AuthService {
       const profile = this.profileRepository.create({
         user: newUser,
       });
+      const points = new Point(newUser, 0, week.id);
       await this.orm.em.persistAndFlush([newUser, profile]);
 
       return this.login(request.username, request.password);

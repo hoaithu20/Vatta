@@ -3,8 +3,8 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { DictionaryRequest } from 'src/dto';
 import { DictionaryService } from 'src/services/dictionnary.service';
 
-@ApiTags('api/dictionary')
-@Controller('api/dictionary')
+@ApiTags('api/question')
+@Controller('api/question')
 export class DictionaryController {
   constructor(private readonly dictionaryService: DictionaryService) {}
 
