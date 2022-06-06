@@ -40,3 +40,9 @@ export class CreateQuestionRequest {
   @Type(() => Answer)
   answers: Answer[];
 }
+
+export class GetDetailStory {
+  @ApiProperty()
+  @IsNumber()
+  storyId: number;
+}

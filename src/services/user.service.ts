@@ -3,8 +3,10 @@ import { EntityRepository } from '@mikro-orm/mysql';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 import { UpdateProfileRequest } from 'src/dto/user.request';
-import { Profile, User } from 'src/entities';
+import { Profile, Story, User } from 'src/entities';
 import fs from 'fs';
+import { GetDetailStory, PagingRequest } from 'src/dto';
+import { QuestionStatus } from 'src/common/constants';
 
 @Injectable()
 export class UserService {
@@ -14,6 +16,8 @@ export class UserService {
     private readonly userRepository: EntityRepository<User>,
     @InjectRepository(Profile)
     private readonly profileRepository: EntityRepository<Profile>,
+    @InjectRepository(Story)
+    private readonly storyRepo: EntityRepository<Story>
   ) {}
 
   async getProfile(userId: number) {
@@ -49,5 +53,40 @@ export class UserService {
     await this.orm.em.persistAndFlush(profile);
     if(oldAvatar) fs.unlinkSync(`./upload/${oldAvatar}`);
     return profile;
+  }
+
+  async getListStory(request: PagingRequest) {
+    const size = request.pageSize || 5;
+    const index = request.pageIndex || 1;
+    const query = this.storyRepo
+      .createQueryBuilder()
+      .where({'status' : QuestionStatus.ACTIVE })
+      .offset((index - 1) * size)
+      .limit(size);
+    const [stories, count] = await Promise.all([
+      query.getResultList(),
+      query.getCount(),
+    ]);
+
+    return [
+      stories.map((i) => ({
+        id: i.id,
+        content: i.content,
+        audio: i.audio,
+        background: i.img,
+        title: i.title,
+      })),
+      count,
+    ];
+  }
+
+  async getDetailStory(request: GetDetailStory) {
+    const story = await this.storyRepo.findOneOrFail({ id: request.storyId });
+    return {
+      content: story.content,
+      audio: story.audio,
+      background: story.img,
+      title: story.title,
+    };
   }
 }

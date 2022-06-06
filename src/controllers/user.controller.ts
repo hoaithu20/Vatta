@@ -10,12 +10,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { Authentication } from 'src/common/decoraters/auth.decorator';
 import { CurrUser } from 'src/common/decoraters/user.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { GetDetailStory, PagingRequest } from 'src/dto';
 import { UpdateProfileRequest } from 'src/dto/user.request';
 import { User } from 'src/entities';
+import { PaginateResult } from 'src/responses/paginateResult';
 import { UserService } from 'src/services/user.service';
 
 @Controller('/api/user')
@@ -57,5 +59,22 @@ export class UserController {
     return res.sendFile(img, {
       root: 'upload',
     });
+  }
+
+  @ApiBody({
+    type: PagingRequest,
+  })
+  @Post('list-story')
+  async getListStory(@Body() request: PagingRequest) {
+    const [data, count] = await this.userService.getListStory(request);
+    return PaginateResult.init(data, count);
+  }
+
+  @ApiBody({
+    type: GetDetailStory,
+  })
+  @Post('get-detail-story')
+  async getDetailStory(@Body() request: GetDetailStory) {
+    return await this.userService.getDetailStory(request);
   }
 }
