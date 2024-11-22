@@ -89,7 +89,8 @@ export class AdminService {
       const newWeek = this.weekRepository.create({
         status: WeekStatus.ACTIVE,
         startTime: now,
-        endTime: new Date(now.getTime() + 1000 * 86400)
+        endTime: new Date(now.getTime() + 1000 * 86400),
+        week: (+(week?.week || '0') + 1) + '',
       })
       await this.weekRepository.persistAndFlush(newWeek)
     }
