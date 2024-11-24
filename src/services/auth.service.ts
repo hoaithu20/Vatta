@@ -17,7 +17,7 @@ import {
   CheckOtpRequest,
   ResetPasswordRequest,
 } from 'src/dto/forgot-pass.request';
-import { WeekStatus } from 'src/common/constants';
+import { UserRole, WeekStatus } from 'src/common/constants';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +35,23 @@ export class AuthService {
   ) {}
   async validate(username: string, password: string) {
     throw new Error('Method not implemented.');
+  }
+
+  async initAdmin() {
+    try {
+      const admin = await this.userRepository.findOne({ role: UserRole.ADMIN });
+    if (!admin) {
+      const password = await bcrypt.hash('Admin123', 10);
+      const newUser = await this.userRepository.create({
+        email: 'admin@gmail.com',
+        username: 'admin',
+        role: UserRole.ADMIN,
+        password,
+      });
+    }
+    } catch (error) {
+      console.log('error initAdmin', error);
+    }
   }
 
   async signup(request: SignupRequest) {
