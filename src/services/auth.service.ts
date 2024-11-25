@@ -42,12 +42,13 @@ export class AuthService {
       const admin = await this.userRepository.findOne({ role: UserRole.ADMIN });
     if (!admin) {
       const password = await bcrypt.hash('Admin123', 10);
-      const newUser = await this.userRepository.create({
+      const newUser = this.userRepository.create({
         email: 'admin@gmail.com',
         username: 'admin',
         role: UserRole.ADMIN,
         password,
-      });
+      })
+      await this.orm.em.persistAndFlush(newUser);
     }
     } catch (error) {
       console.log('error initAdmin', error);

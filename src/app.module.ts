@@ -39,6 +39,7 @@ import { AdminModule } from './modules/admin.module';
         highlighter: new SqlHighlighter(),
         debug: true,
         autoLoadEntities: true,
+        allowGlobalContext: true,
       }),
       inject: [ConfigService],
     }),
