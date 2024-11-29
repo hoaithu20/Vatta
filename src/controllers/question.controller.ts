@@ -4,6 +4,7 @@ import { Authentication, CurrUser } from 'src/common/decoraters';
 import {
   CreateQuestionRequest,
   DoQuestionRequest,
+  GenQuestionByAI,
   GetQuestionRequest,
   PagingRequest,
 } from 'src/dto';
@@ -35,7 +36,15 @@ export class QuestionsController {
     @CurrUser() user: User,
     @Body() request: CreateQuestionRequest,
   ) {
-    return this.questionService.createQuestion(user.id, request);
+    return this.questionService.createQuestion(user, request);
+  }
+
+  @ApiBody({
+    type: GenQuestionByAI,
+  })
+  @Post('gen-question-by-ai')
+  async genQuestion(@CurrUser() user: User, @Body() request: GenQuestionByAI) {
+    return this.questionService.genQuestionByAI(user, request);
   }
 
   @ApiBody({

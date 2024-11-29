@@ -20,4 +20,5 @@ export enum ErrorCode {
   ANSWER_NOT_IN_QUESTION = 'câu trả lời không ở trong câu hỏi',
   NOT_FOUND_WEEK = 'không tìm thấy tuần',
   EXPIRED_OTP = 'otp hết hạn',
+  FAILED = 'Có lỗi, vui lòng thử lại.'
 }

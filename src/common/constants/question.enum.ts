@@ -10,6 +10,13 @@ export enum Level {
   HARD = 3,
 }
 
+export const LevelMap ={
+  [Level.EASY]: 'dễ',
+  [Level.MEDIUM]: 'trung bình',
+  [Level.HARD]: 'khó',
+
+}
+
 export enum GetQuestionType {
   ACTIVE,
   INACTIVE,

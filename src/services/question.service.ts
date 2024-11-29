@@ -4,6 +4,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   ErrorCode,
   GetQuestionType,
+  LanguageMap,
+  LevelMap,
   QuestionStatus,
   UserRole,
   WeekStatus,
@@ -13,6 +15,8 @@ import {
   PagingRequest,
   DoQuestionRequest,
   GetQuestionRequest,
+  GenQuestionByAI,
+  AnswerDto,
 } from 'src/dto';
 import {
   Answer,
@@ -26,11 +30,14 @@ import {
 } from 'src/entities';
 import _ from 'lodash';
 import { MikroORM } from '@mikro-orm/core';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 
 @Injectable()
 export class QuestionService {
   constructor(
     private readonly orm: MikroORM,
+    private readonly configService: ConfigService,
     @InjectRepository(Question)
     private readonly questionRepository: EntityRepository<Question>,
     @InjectRepository(User)
@@ -79,16 +86,14 @@ export class QuestionService {
     return [_.shuffle(questionMap), count];
   }
 
-  async createQuestion(userId: number, request: CreateQuestionRequest) {
+  async createQuestion(user: User, request: CreateQuestionRequest) {
     const { title, level, answers } = request;
-    const user = await this.userRepository.findOne({ id: userId });
-    console.log(user)
 
     const status =
       user.role == UserRole.ADMIN
         ? QuestionStatus.ACTIVE
         : QuestionStatus.INACTIVE;
-    console.log('a',status)
+    console.log('a', status);
     const em = this.orm.em.fork();
     await em.begin();
 
@@ -98,7 +103,7 @@ export class QuestionService {
         level,
         status,
         totalAnswer: request.answers.length,
-        user: userId as any,
+        user: user.id as any,
       });
       const answerArr: Answer[] = [];
       for (const answer of answers) {
@@ -153,9 +158,9 @@ export class QuestionService {
     if (history) {
       questionIds = history.questions;
     }
-    console.log('questionId', questionIds)
-    console.log('tyeof', typeof(questionIds));
-    
+    console.log('questionId', questionIds);
+    console.log('tyeof', typeof questionIds);
+
     const query = this.questionRepository
       .createQueryBuilder('q')
       .offset((pageIndex - 1) * pageSize)
@@ -249,5 +254,54 @@ export class QuestionService {
       totalQuestion: allQuestionNum,
       totalPackage: allPackageNum,
     };
+  }
+
+  async genQuestionByAI(user: User, body: GenQuestionByAI) {
+    const { numberOfQuestion, level, topic, language } = body;
+    const msgSendAI = `tạo ${numberOfQuestion} câu hỏi ${LanguageMap[language]} cấp độ ${LevelMap[level]} về chủ đề  ${topic}
+    . Mỗi câu có 4 đáp án để chọn. 
+    Viết dưới dạng array json với cấu trúc như sau: tiêu đề câu hỏi có key là question, 4 đáp án được đặt trong 1 mảng string với key là option
+    key cuối cùng là answer với value là đáp án đúng`;
+
+    const apiUrl = this.configService.get('CHATGPT_URL', '');
+    const apiKey = this.configService.get('CHATGPT_KEY', '');
+    try {
+      const response = await axios.post(
+        apiUrl,
+        {
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: msgSendAI }],
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+        },
+      );
+
+      const result = response.data.choices[0].message.content;
+      const resultObject = JSON.parse(result);
+
+      for (const item of resultObject) {
+        const answers: AnswerDto[] = [];
+        item.options.forEach((option) => {
+          answers.push({
+            content: option,
+            isCorrect: option == item.answer,
+            explain: null,
+          });
+        });
+        const question: CreateQuestionRequest = {
+          title: item.question,
+          level,
+          answers,
+        };
+        await this.createQuestion(user, question);
+      }
+    } catch (error) {
+      console.log('Error gen by chat gpt', error);
+      return { mess: ErrorCode.FAILED };
+    }
   }
 }
